@@ -13,23 +13,23 @@ type production struct {
 func main() {
 	productions := []production{
 
-        // //Prueba #1 La que está en las diapositivas de Cristian
-		// {"E", []string{"T", "EP"}},
-		// {"EP", []string{"+", "T", "EP"}},
-		// {"EP", []string{"lambda"}},
-		// {"T", []string{"F", "TP"}},
-		// {"TP", []string{"*", "F", "TP"}},
-		// {"TP", []string{"lambda"}},
-		// {"F", []string{"id" }},
-		// {"F", []string{"(", "E", ")"}},
+        //Prueba #1 La que está en las diapositivas de Cristian
+		{"E", []string{"T", "EP"}},
+		{"EP", []string{"+", "T", "EP"}},
+		{"EP", []string{"lambda"}},
+		{"T", []string{"F", "TP"}},
+		{"TP", []string{"*", "F", "TP"}},
+		{"TP", []string{"lambda"}},
+		{"F", []string{"id" }},
+		{"F", []string{"(", "E", ")"}},
 
         /*
         Primeros:
-        EP: {+, -, lambda}
-        TP: {*, /, lambda}
-        F: {(, num, id}
-        T: {(, num, id}
-        E: {(, num, id}
+       F: {id, (}
+	   T: {id, (}
+       E: {id, (}
+       EP: {+, lambda}
+       TP: {*, lambda}
         */
 
         // //Prueba #2
@@ -40,17 +40,17 @@ func main() {
         // {"C", []string{"s"}},
 
         // //Prueba #3 Sacada del vídeo del Santi : https://www.youtube.com/watch?v=neZpR3V2WNY&t=615s
-        {"E", []string{"T", "EP"}},
-        {"EP", []string{"+", "T", "EP"}},
-        {"EP", []string{"-", "T", "EP"}},
-        {"EP", []string{"lambda"}},
-        {"T", []string{"F", "TP"}},
-        {"TP", []string{"*", "F", "TP"}},
-        {"TP", []string{"/", "F", "TP"}},
-        {"TP", []string{"lambda"}},
-        {"F", []string{"(", "E", ")"}},
-        {"F", []string{"num"}},
-        {"F", []string{"id"}},
+        // {"E", []string{"T", "EP"}},
+        // {"EP", []string{"+", "T", "EP"}},
+        // {"EP", []string{"-", "T", "EP"}},
+        // {"EP", []string{"lambda"}},
+        // {"T", []string{"F", "TP"}},
+        // {"TP", []string{"*", "F", "TP"}},
+        // {"TP", []string{"/", "F", "TP"}},
+        // {"TP", []string{"lambda"}},
+        // {"F", []string{"(", "E", ")"}},
+        // {"F", []string{"num"}},
+        // {"F", []string{"id"}},
         
         /*
         Primeros:
@@ -60,6 +60,31 @@ func main() {
         T: {(, num, id}
         E: {(, num, id}
         */
+
+		// //Prueba #4 La del parcial
+		// {"AL", []string{"id", ":=", "P"}},
+		// {"P", []string{"D", "PP"}},
+		// {"PP", []string{"or","D", "PP"}},
+		// {"PP", []string{"lambda"}},
+		// {"D", []string{"C", "DP"}},
+		// {"DP", []string{"and","C","DP"}},
+		// {"DP", []string{"lambda"}},
+		// {"C", []string{"S"}},
+		// {"C", []string{"not", "(", "P", ")"}},
+		// {"S", []string{"(", "P", ")"}},
+		// {"S", []string{"OP", "REL", "OP"}},
+		// {"S", []string{"true"}},
+		// {"S", []string{"false"}},
+		// {"REL", []string{"=",}},
+		// {"REL", []string{"<","RP"}},
+		// {"REL", []string{">", "EP"}},
+		// {"RP", []string{"="}},
+		// {"RP", []string{">"}},
+		// {"RP", []string{"lambda"}},
+		// {"EP", []string{"="}},
+		// {"EP", []string{"lambda"}},
+		// {"OP", []string{"id"}},
+		// {"OP", []string{"num"}},
 	}
 
 	// Se buscan los primeros
@@ -105,20 +130,23 @@ func main() {
 						}
 					}
 					for j := i + 1; j < len(p.right); j++ {
-						for _, s := range firsts[p.right[j]] {
-							if s != "lambda" {
-								addToSet(follows, p.right[i], s)
-							} else {
-								// Si lambda está en los primeros, añade los siguientes de la izquierda
-								for _, t := range follows[p.left] {
-									addToSet(follows, p.right[i], t)
+						if isTerminal(p.right[j]) && p.right[j]!= "lambda"{
+							addToSet(follows, p.right[i], p.right[j])
+						}
+							for _, s := range firsts[p.right[j]] {
+								if s != "lambda" {
+									addToSet(follows, p.right[i], s)
+								} else {
+									// Si lambda está en los primeros, añade los siguientes de la izquierda
+									for _, t := range follows[p.left] {
+										addToSet(follows, p.right[i], t)
+									}
 								}
 							}
-						}
-						if containsLambda(firsts[p.right[j]]) {
-							continue
-						}
-						break
+							if containsLambda(firsts[p.right[j]]) {
+								continue
+							}
+							break
 					}
 					if len(follows[p.right[i]]) > oldLen {
 						changed = true
